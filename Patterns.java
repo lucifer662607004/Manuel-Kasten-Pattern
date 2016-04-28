@@ -5,6 +5,7 @@
  */
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,21 +18,40 @@ import javax.imageio.ImageIO;
 public class Patterns {
     static int width=1024;
     static int height=1024;
+    static int marginH=0;
+    static int marginW=0;
     /**
      * @param args the command line arguments
+     * 
      */
     public static void main(String[] args) {
         // TODO code application logic here
 //        System.out.println(Patterns.RD(500, 500));
+        if (args.length>1) {
+            try {
+                marginH=Integer.parseInt(args[0]);
+                marginW=Integer.parseInt(args[1]);
+                
+            }catch (NumberFormatException e){
+                System.out.println("Wrong Params! Usage: \njava Patterns <int Height-1024> <int Width-1024>");
+                marginH=0;
+                marginW=0;
+            }
+            
+        }
         long start = System.currentTimeMillis();
-        BufferedImage result=new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-        for (int i=0;i<result.getWidth();i++){
-            for (int j=0;j<result.getHeight();j++){
+        BufferedImage result=new BufferedImage(width+2*marginW,height+2*marginH,BufferedImage.TYPE_INT_RGB);
+        //Graphics2D g=result.createGraphics();
+        for (int i=0-marginW;i<width+marginW;i++){
+            for (int j=0-marginH;j<height+marginH;j++){
                 Color c=new Color((int)Patterns.RD(i, j),(int)Patterns.GR(i, j),(int)Patterns.BL(i, j));
-                result.setRGB(i, j, c.getRGB());
+                result.setRGB(i+marginW, j+marginH, c.getRGB());//Time Eslapse: 5.94
+                //g.setColor(c);
+                //g.drawRect(i+marginW, j+marginH, 1, 1);//6.009
+                //g.drawLine(i, j, 1, 1);//Time Eslapse: 8.544
             }
         }
-        
+        //g.dispose();
         try{
             File output=new File("result.png");
             ImageIO.write(result, "png", output);
